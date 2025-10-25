@@ -25,6 +25,7 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
       width: 100%;
       max-width: 400px;
+      position: relative;
     }
     input[type="text"] {
       width: 90%;
@@ -58,6 +59,35 @@
       vertical-align: middle;
       font-size: 20px;
     }
+    /* Three dot menu */
+    .menu {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      cursor: pointer;
+    }
+    .menu-items {
+      display: none;
+      background-color: #121212;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      padding: 10px;
+      position: absolute;
+      top: 30px;
+      right: 0;
+      width: 150px;
+    }
+    .menu-items a {
+      color: white;
+      text-decoration: none;
+      display: block;
+      padding: 8px;
+      border-radius: 5px;
+      margin: 5px 0;
+    }
+    .menu-items a:hover {
+      background-color: #03dac6;
+    }
   </style>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
@@ -66,6 +96,14 @@
     <h2>Search with Mudasir</h2>
     <input type="text" id="search-input" placeholder="Search..." autocomplete="off">
     <button onclick="search()">Search <span class="material-icons">search</span></button>
+
+    <!-- Three dot menu -->
+    <div class="menu" onclick="toggleMenu()">
+      <span class="material-icons">more_vert</span>
+    </div>
+    <div class="menu-items" id="menu-items">
+      <a href="https://wized1.github.io/Clock" target="_blank">Clock</a>
+    </div>
   </div>
 
   <script>
@@ -75,6 +113,19 @@
         window.location.href = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
       }
     }
+
+    function toggleMenu() {
+      const menuItems = document.getElementById('menu-items');
+      menuItems.style.display = menuItems.style.display === 'block' ? 'none' : 'block';
+    }
+
+    // Close the menu if user clicks outside of it
+    window.onclick = function(event) {
+      const menuItems = document.getElementById('menu-items');
+      if (!event.target.matches('.menu') && !event.target.matches('.material-icons')) {
+        menuItems.style.display = 'none';
+      }
+    };
   </script>
 </body>
 </html>
