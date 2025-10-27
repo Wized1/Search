@@ -1,9 +1,14 @@
+<!--
+  Endroid Search - A simple search interface
+  Copyright (c) 2025 Wized1
+  Licensed under the MIT License. See LICENSE file for details.
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Endroid Search</title></title>
+  <title>Endroid Search</title>
   <style>
     /* Base styling for the app */
     body {
@@ -16,30 +21,76 @@
       align-items: center;
       height: 100vh;
       color: white;
+      overflow-x: hidden; /* Prevent horizontal overflow */
     }
     .search-container {
       text-align: center;
       background: rgba(0, 0, 0, 0.5);
-      padding: 20px;
+      padding: 15px; /* Reduced padding for better fit */
       border-radius: 10px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-      width: 100%;
-      max-width: 400px;
+      width: 85%; /* More flexible width */
+      max-width: 380px; /* Slightly reduced max-width */
       position: relative;
+      box-sizing: border-box;
+    }
+    .search-bar {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      width: 100%;
     }
     input[type="text"] {
-      width: 90%;
+      flex: 1;
       padding: 15px;
       font-size: 18px;
-      border-radius: 25px;
+      border-radius: 25px 0 0 25px;
       border: none;
       outline: none;
       background: #121212;
       color: white;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      box-sizing: border-box;
     }
     input[type="text"]:focus {
       background: #3700b3;
+    }
+    .search-select {
+      position: relative;
+      display: inline-block;
+    }
+    .search-select select {
+      padding: 15px 35px 15px 15px; /* Space for larger arrow */
+      font-size: 18px;
+      border-radius: 0 25px 25px 0;
+      border: none;
+      background: #121212;
+      color: white; /* Visible text */
+      outline: none;
+      cursor: pointer;
+      appearance: none;
+      width: 100px; /* Adjusted width for text */
+    }
+    .search-select select option {
+      background: #121212;
+      color: white;
+    }
+    /* Custom indicator (larger arrow) matching search button color */
+    .search-select::after {
+      content: '▼'; /* Downward triangle */
+      color: #03dac6; /* Matches search button color */
+      font-size: 22px; /* Increased to 22px */
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      transition: color 0.3s ease;
+    }
+    /* Match hover/focus color to button hover */
+    .search-select select:focus + ::after,
+    .search-select select:hover + ::after {
+      color: #018786; /* Matches button hover color */
     }
     button {
       background-color: #03dac6;
@@ -47,7 +98,7 @@
       border: none;
       padding: 10px 20px;
       font-size: 16px;
-      margin-top: 20px;
+      margin-top: 15px; /* Reduced margin */
       border-radius: 25px;
       cursor: pointer;
       transition: background-color 0.3s ease;
@@ -88,13 +139,44 @@
     .menu-items a:hover {
       background-color: #03dac6;
     }
+    /* Mobile responsiveness */
+    @media (max-width: 400px) {
+      .search-container {
+        width: 95%;
+        padding: 10px;
+      }
+      .search-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .search-select select {
+        width: 100%;
+        border-radius: 0 0 25px 25px;
+        margin-top: 5px;
+      }
+      input[type="text"] {
+        border-radius: 25px 25px 0 0;
+      }
+      button {
+        margin-top: 10px;
+      }
+    }
   </style>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
   <div class="search-container">
     <h2>Search with Endroid</h2>
-    <input type="text" id="search-input" placeholder="Search..." autocomplete="off">
+    <div class="search-bar">
+      <input type="text" id="search-input" placeholder="Search..." autocomplete="off">
+      <div class="search-select">
+        <select id="search-engine">
+          <option value="google">Google</option>
+          <option value="bing">Bing</option>
+          <option value="duckduckgo">DuckDuckGo</option>
+        </select>
+      </div>
+    </div>
     <button onclick="search()">Search <span class="material-icons">search</span></button>
 
     <!-- Three dot menu -->
@@ -103,14 +185,27 @@
     </div>
     <div class="menu-items" id="menu-items">
       <a href="https://wized1.github.io/Clock" target="_blank">Clock</a>
+      <a href="https://github.com/Wized1/Search" target="_blank">About</a>
     </div>
   </div>
 
   <script>
     function search() {
       const query = document.getElementById('search-input').value;
+      const engine = document.getElementById('search-engine').value;
       if (query.trim()) {
-        window.location.href = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+        let url;
+        switch (engine) {
+          case 'bing':
+            url = `https://www.bing.com/search?q=${encodeURIComponent(query)}`;
+            break;
+          case 'duckduckgo':
+            url = `https://duckduckgo.com/?q=${encodeURIComponent(query)}`;
+            break;
+          default:
+            url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+        }
+        window.location.href = url;
       }
     }
 
@@ -118,6 +213,17 @@
       const menuItems = document.getElementById('menu-items');
       menuItems.style.display = menuItems.style.display === 'block' ? 'none' : 'block';
     }
+
+    // Update placeholder based on selected engine
+    document.getElementById('search-engine').addEventListener('change', function() {
+      const engine = this.value;
+      const placeholders = {
+        'google': 'Search with Google...',
+        'bing': 'Search with Bing...',
+        'duckduckgo': 'Search with DuckDuckGo...'
+      };
+      document.getElementById('search-input').placeholder = placeholders[engine] || 'Search...';
+    });
 
     // Close the menu if user clicks outside of it
     window.onclick = function(event) {
@@ -128,4 +234,4 @@
     };
   </script>
 </body>
-</html>
+  </html>
