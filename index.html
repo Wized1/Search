@@ -190,6 +190,22 @@
   </div>
 
   <script>
+    // Load saved engine on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      const savedEngine = localStorage.getItem('selectedEngine');
+      if (savedEngine) {
+        document.getElementById('search-engine').value = savedEngine;
+      }
+      // Update placeholder based on loaded engine
+      const engine = document.getElementById('search-engine').value;
+      const placeholders = {
+        'google': 'Search with Google...',
+        'bing': 'Search with Bing...',
+        'duckduckgo': 'Search with DuckDuckGo...'
+      };
+      document.getElementById('search-input').placeholder = placeholders[engine] || 'Search...';
+    });
+
     function search() {
       const query = document.getElementById('search-input').value;
       const engine = document.getElementById('search-engine').value;
@@ -214,7 +230,7 @@
       menuItems.style.display = menuItems.style.display === 'block' ? 'none' : 'block';
     }
 
-    // Update placeholder based on selected engine
+    // Update placeholder and save selected engine
     document.getElementById('search-engine').addEventListener('change', function() {
       const engine = this.value;
       const placeholders = {
@@ -223,6 +239,7 @@
         'duckduckgo': 'Search with DuckDuckGo...'
       };
       document.getElementById('search-input').placeholder = placeholders[engine] || 'Search...';
+      localStorage.setItem('selectedEngine', engine); // Save to localStorage
     });
 
     // Close the menu if user clicks outside of it
@@ -234,4 +251,4 @@
     };
   </script>
 </body>
-  </html>
+</html>
